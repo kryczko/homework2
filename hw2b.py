@@ -65,6 +65,39 @@ def test_quad1():
     assert np.allclose(c, c_true), \
         "Incorrect result, c = %s, Expected: c = %s" % (c,c_true)
 
+def cubic_interp(xi,yi):
+    
+    error_message = "xi and yi should have type numpy.ndarray"
+    assert (type(xi) is np.ndarray) and (type(yi) is np.ndarray), error_message
+
+    error_message = "xi and yi should have length 4"
+    assert len(xi)==4 and len(yi)==4, error_message
+
+    # set up linear system to interpolate through data points
+
+    A = np.vstack([np.ones(4), xi, xi**2, xi**3]).T
+    b = yi
+
+    c = solve(A,b)
+    return c
+
+
+def plot_cubic(xi,yi):
+
+    c = cubic_interp(xi,yi)
+    x = np.linspace(xi.min() - 1, xi.max() + 1, 1000)
+    y = c[0] + c[1]*x + c[2]*x**2 + c[3]*x**3
+    plt.figure(1)
+    plt.clf()
+    plt.plot(x,y,'b-')
+
+    plt.plot(xi, yi, 'ro')
+    plt.ylim(-2, 8)
+
+    plt.title("Data points and interpolating polynomial")
+
+    plt.savefig('cubic.pdf')
+
 if __name__ == "__main__":
     print "Running test..."
     test_quad1()
